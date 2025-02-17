@@ -1,0 +1,40 @@
+<!-- <h2>Sign Up</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+    <br>
+    <a href="{% url 'login' %}">Already Have an Account</a>
+</form> -->
+<h2>Sign Up</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="{{ form.username.id_for_label }}">Username:</label>
+        {{ form.username }}
+        {{ form.username.errors }}  <br> <br>
+
+        <label for="{{ form.fullname.id_for_label }}">Full Name:</label>
+        {{ form.fullname }}
+        {{ form.fullname.errors }}  <br> <br>
+
+        <label for="{{ form.email.id_for_label }}">Email Address:</label>
+        {{ form.email }}
+        {{ form.email.errors }}  <br> <br>
+
+        <label for="{{ form.bio.id_for_label }}">Bio:</label>
+        {{ form.bio }}
+        {{ form.bio.errors }}  <br> <br>
+
+        <label for="{{ form.password1.id_for_label }}">Password:</label>
+        {{ form.password1 }}
+        <!-- {{ form.password1.errors }} -->  <br> <br>
+
+        <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
+        {{ form.password2 }}
+        <!-- {{ form.password2.errors }} -->  <br> <br>
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>

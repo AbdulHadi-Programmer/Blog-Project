@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h2>{{ blog.title }}</h2>
+    <p>By {{ blog.author.username }} | {{ blog.created_at }}</p>
+    <p>{{ blog.content }}</p>
+
+    {% if blog.author == request.user %}
+        <a href="{% url 'blog_edit' blog.id %}">Edit</a>
+        <a href="{% url 'blog_delete' blog.id %}">Delete</a>
+    {% endif %}
+    <a href="{% url 'blog_list' %}">Back to Blogs</a>
+
+</body>
+</html>

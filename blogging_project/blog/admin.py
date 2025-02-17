@@ -1,3 +1,21 @@
 from django.contrib import admin
 
 # Register your models here.
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser, BlogPost
+
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('fullname' , 'username', 'email', 'password','bio')
+    list_filter = ('username', )
+
+# admin.site.register(CustomUser, CustomUserAdmin)
+
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'content', 'visibility')  # Fields to display in the list view
+    list_filter = ('title', 'visibility')
+# Register the model and admin class
+admin.site.register(BlogPost, BlogPostAdmin)
+
+
+# Key Areas to Discuss Answer :            1.: - It is just a brand name for now later we register after we start earning ,    - We have a long term visison to build a billion dollar unicorn company name Dynamic Script in next 8 years  and short term goals is to add more skilled persons and also build more projects and portfolio and train my team at professional level   -  Currently we are focusing on Cartobuz and i think that to give all responsibility and setup to django focused learner and i could handle the mvp and sass solution  and also for finding developer i should work with my friends to build some projects and then gradually and slowly added them into my team as all are unpaid and they can't be directed into my team and many of developers should work remotely as we live far away from each other  .         |2|- Building and Managing my Team:                                    1.  As me and one more person is focused and in both us me is more focused and responsible and one more is learning and he is over confident              2.   I show the business and ideas not discuss about profit -sharing/equity      3. Also this is also not decided yet each and every things managed by me .       |3|. Equity and Profit Sharing :         1. As this is also not decided           2. I give them real dreams and real earnig and worth that this specific web has worth 100M $ networth etc .            3. I also dont think about it yet                     {4}. not decided or not thinked   {5} i can solve any problem but without ai or heavy algorithms and that can be minimal ui backend focused ,   {6}. Self fund the startup mean bootstrap      and       through cartobuz profit and subscription models and ads or affliate links to our website   Key Areas to Discuss Answer :            1.: - It is just a brand name for now later we register after we start earning ,    - We have a long term visison to build a billion dollar unicorn company name Dynamic Script in next 8 years  and short term goals is to add more skilled persons and also build more projects and portfolio and train my team at professional level   -  Currently we are focusing on Cartobuz and i think that to give all responsibility and setup to django focused learner and i could handle the mvp and sass solution  and also for finding developer i should work with my friends to build some projects and then gradually and slowly added them into my team as all are unpaid and they can't be directed into my team and many of developers should work remotely as we live far away from each other  .         |2|- Building and Managing my Team:                                    1.  As me and one more person is focused and in both us me is more focused and responsible and one more is learning and he is over confident              2.   I show the business and ideas not discuss about profit -sharing/equity      3. Also this is also not decided yet each and every things managed by me .       |3|. Equity and Profit Sharing :         1. As this is also not decided           2. I give them real dreams and real earnig and worth that this specific web has worth 100M $ networth etc .            3. I also dont think about it yet                     {4}. not decided or not thinked   {5} i can solve any problem but without ai or heavy algorithms and that can be minimal ui backend focused ,   {6}. Self fund the startup mean bootstrap      and       through cartobuz profit and subscription models and ads or affliate links to our website   

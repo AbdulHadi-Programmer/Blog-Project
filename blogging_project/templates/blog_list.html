@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+   <h2>Myself : {{ request.user.username | upper }}</h2>  <hr>
+    <h2>All Blogs</h2>
+    {% for blog in blogs %}
+        <h3><a href="{% url 'blog_detail' blog.id %}">{{ blog.title }}</a></h3>
+        <p>By {{ blog.author.username }} | {{ blog.created_at }}</p>
+        <p>{{ blog.content|truncatewords:20 }}</p>
+    {% endfor %}
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    <a href="{% url 'blog_create' %}">Create New Blog</a>
+
+</body>
+</html>

@@ -1,57 +1,64 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import * 
-from .forms import PostForm, ProfileForm 
-# ------------------------------------------------------------------------------------------ 
-# Page	         -|-   URL	                 -|-  * Description  *                         |
-# ------------------------------------------------------------------------------------------ 
-# Homepage	     -|-    /	                 -|-   Shows latest blog posts                 |
-# Post Detail	 -|-   /post/<id>/	         -|-   Displays a single post with comments    |
-# Create Post	 -|-   /create/	             -|-   Form for creating a new post            |
-# Author Profile -|-   /author/<username>/	 -|-   Displays an author's profile and posts  |
-# Tagged Posts	 -|-   /tag/<tagname>/	     -|-   Shows all posts with a specific tag     |
-# ------------------------------------------------------------------------------------------ 
-
-# Home Page :
-def home_page(request):
-    posts = Post.objects.filter(is_published=True).order_by('-created_at')
-    return render(request, 'index.html', {'posts': posts})
-
-# Post Create Edit and View Detail :
-# def post_detail(request):
-#     return render(request, 'post_detail.html')
-def post_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    post.views = F('views') + 1  # Increase views count
-    post.save(update_fields=['views'])
-
-    comments = post.comments.filter(is_approved=True)
-    return render(request, 'post_detail.html', {'post': post, 'comments': comments})
+from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
+from .models import BlogPost 
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q  
 
 
-def post_form(request, id=None):
-    if id:
-        post = get_object_or_404(Post, id=id)
-    else:
-        post = None 
+# Blog List View (Shows Public Blogs + Author's Own Blogs)
+class BlogListView(LoginRequiredMixin, ListView):
+    model = BlogPost
+    template_name = 'blog_list.html'
+    context_object_name = 'blogs'
 
-    if request.method == "POST":
-        form = PostForm(request.POST, instance = post)
-        if form.is_valid():
-            form.save()
-            return redirect('posts')
-    else:
-        form = PostForm(instance = post)
-    return render(request, 'post_form.html', {'form': form, 'post': post})
+    def get_queryset(self):
+        user = self.request.user
+        return BlogPost.objects.filter(Q(visibility='public') | Q(author=user)).order_by('-created_at')
+
+# Blog Detail View (Shows Individual Blog with Visibility Check)
+class BlogDetailView(LoginRequiredMixin, DetailView):
+    model = BlogPost
+    template_name = 'blog_detail.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        return BlogPost.objects.filter(Q(visibility='public') | Q(author=user))
 
 
-def author_profile(request):
-    return render(request, 'author_profile.html')
+# Blog Create View (Only for Logged-in Users)
+class BlogCreateView(LoginRequiredMixin, CreateView):
+    model = BlogPost
+    fields = ['title', 'content', 'visibility']
+    template_name = 'blog_form.html'
+    success_url = reverse_lazy('blog_list')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
-def tagged_post(request):
-    return render(request, 'tagged_post.html')
+# Blog Update View (Only Author Can Edit)
+class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = BlogPost
+    fields = ['title', 'content', 'visibility']
+    template_name = 'blog_form.html'
+    success_url = reverse_lazy('blog_list')
 
-def tagged_posts(request, tag_name):
-    tag = get_object_or_404(Tag, name=tag_name)
-    posts = tag.posts.all()
-    return render(request, 'tagged_posts.html', {'tag': tag, 'posts': posts})
+    def test_func(self):
+        blog = self.get_object()
+        return blog.author == self.request.user
+
+
+# Blog Delete View (Only Author Can Delete)
+class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = BlogPost
+    template_name = 'blog_confirm_delete.html'
+    success_url = reverse_lazy('blog_list')
+
+    def test_func(self):
+        blog = self.get_object()
+        return blog.author == self.request.user
+
